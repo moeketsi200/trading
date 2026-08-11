@@ -1,0 +1,14 @@
+# Environment variables & secrets (NEVER commit to git)
+.env
+*.env
+
+# Python Virtual Environment & Cache
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS / IDE files
+.DS_Store
+.vscode/
+.idea/
