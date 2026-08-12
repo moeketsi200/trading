@@ -27,8 +27,8 @@ DEFAULT_WATCHLIST_EXPANDED = [
     
     # Tier 2: Forex Crosses / Minors
     {"name": "EUR/GBP", "ticker": "EURGBP=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "GBP/JPY", "ticker": "GBPUSD=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "EUR/JPY", "ticker": "EURUSD=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
+    {"name": "GBP/JPY", "ticker": "GBPJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
+    {"name": "EUR/JPY", "ticker": "EURJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
     
     # Tier 3: Equity Indices
     {"name": "NASDAQ (NAS100)", "ticker": "^NDX", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},

@@ -12,12 +12,24 @@ class MarketDataEngine:
 
     def fetch_historical_candles(self, period: str = "60d", interval: str = config.TIMEFRAME) -> pd.DataFrame:
         """
-        Fetches historical OHLC candle data for the symbol.
+        Fetches historical OHLC candle data for the symbol with ticker fallback support.
         Returns a Pandas DataFrame with DatetimeIndex and columns [Open, High, Low, Close, Volume].
         """
-        ticker = yf.Ticker(self.symbol)
-        df = ticker.history(period=period, interval=interval)
-        
+        tickers_to_try = [self.symbol]
+        if "=X" in self.symbol:
+            tickers_to_try.append(self.symbol.replace("=X", ""))
+            
+        df = pd.DataFrame()
+        for t in tickers_to_try:
+            try:
+                ticker_obj = yf.Ticker(t)
+                temp_df = ticker_obj.history(period=period, interval=interval)
+                if not temp_df.empty:
+                    df = temp_df
+                    break
+            except Exception:
+                continue
+                
         if df.empty:
             raise ValueError(f"Failed to fetch market data for {self.symbol}")
             
