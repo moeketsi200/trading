@@ -26,5 +26,14 @@ class TradingConfig:
     # News Handler Settings
     PRE_NEWS_SHIELD_MINUTES: int = 30  # Pause 30 minutes before high-impact news
     POST_NEWS_HUNTER_MINUTES: int = 30 # Wait 30 minutes after news before hunting trend
-    
+
+    # Full Universe Scanner Toggles (overridden by .env flags)
+    SCAN_FOREX: bool = True        # Scan all ~60 Forex pairs
+    SCAN_METALS: bool = True       # Scan Metals (Gold, Silver, Platinum, etc.)
+    SCAN_COMMODITIES: bool = True  # Scan Energy & Agriculture
+    SCAN_INDICES: bool = True      # Scan Global Indices (~20)
+    SCAN_CRYPTO: bool = False      # Scan Crypto (BTC, ETH, SOL, etc.)
+    SCAN_US_STOCKS: bool = False   # Scan S&P 500 stocks (~480, slow)
+    MAX_STOCKS: int = 500          # Max S&P 500 stocks to include
+
 config = TradingConfig()
