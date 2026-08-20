@@ -109,37 +109,37 @@ Edit `.env` to set your credentials (see [Environment Variables](#-environment-v
 Scans all watchlist pairs and prints actionable trade recommendations.
 
 ```bash
-python main.py --scan
+python3 main.py --scan
 ```
 
 ### Run in Fast / Hyper-Sensitive Mode
 Uses tighter EMA 5/15 crossovers to force signal detection (for testing purposes).
 
 ```bash
-python main.py --fast-scan
+python3 main.py --fast-scan
 ```
 
 ### Preview a Sample Signal Card
 Renders a formatted demo recommendation card without live data.
 
 ```bash
-python main.py --demo-signal
+python3 main.py --demo-signal
 ```
 
 ### Execute a Demo Trade on MT5
 Places a test market order on your configured MT5 Demo Account.
 
 ```bash
-python main.py --demo-order
+python3 main.py --demo-order
 ```
 
 ### Run the Backtest Engine
 Backtests the strategy on 60 days of EUR/USD historical 1H data.
 
 ```bash
-python main.py --backtest
+python3 main.py --backtest
 # or simply:
-python main.py
+python3 main.py
 ```
 
 ---
@@ -204,7 +204,7 @@ docker compose up --build
 ### Run the scanner via Docker
 
 ```bash
-docker run --env-file .env trading-bot python main.py --scan
+docker run --env-file .env trading-bot python3 main.py --scan
 ```
 
 ---
