@@ -1,0 +1,16 @@
+[
+    {"name": "EUR/USD", "ticker": "EURUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
+    {"name": "GBP/USD", "ticker": "GBPUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
+    {"name": "USD/JPY", "ticker": "USDJPY=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
+    {"name": "AUD/USD", "ticker": "AUDUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
+    {"name": "USD/CAD", "ticker": "USDCAD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
+    {"name": "USD/CHF", "ticker": "USDCHF=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
+    {"name": "GOLD (XAU/USD)", "ticker": "GC=F", "tier": "Tier 1: Metal / Commodity", "rec": "RECOMMENDED (Post-News)"},
+    {"name": "EUR/GBP", "ticker": "EURGBP=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
+    {"name": "GBP/JPY", "ticker": "GBPJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
+    {"name": "EUR/JPY", "ticker": "EURJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
+    {"name": "NASDAQ (NAS100)", "ticker": "^NDX", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},
+    {"name": "US30 (DOW JONES)", "ticker": "^DJI", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},
+    {"name": "BITCOIN (BTC/USD)", "ticker": "BTC-USD", "tier": "Tier 4: Crypto", "rec": "HIGH VOLATILITY"},
+    {"name": "ETHEREUM (ETH/USD)", "ticker": "ETH-USD", "tier": "Tier 4: Crypto", "rec": "HIGH VOLATILITY"}
+]

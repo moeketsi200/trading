@@ -27,6 +27,9 @@ class JohnMurphyStrategy:
         ema_200 = latest['EMA_200']
         support = latest['Support']
         resistance = latest['Resistance']
+        rsi = latest.get('RSI_14', 50)
+        macd_line = latest.get('MACD_Line', 0)
+        macd_signal = latest.get('MACD_Signal', 0)
         
         # 1. Bullish Setup (Uptrend: EMA 50 > EMA 200)
         if latest['Uptrend']:
@@ -34,14 +37,18 @@ class JohnMurphyStrategy:
             prev_low = previous['Low']
             prev_ema_50 = previous['EMA_50']
             
+            # Additional Filters
+            rsi_filter = rsi < 70  # Not overbought
+            macd_filter = macd_line > macd_signal  # Bullish MACD confirmation
+            
             # EMA 50 bounce or Support level bounce
-            if prev_low <= prev_ema_50 and close_price > ema_50:
+            if prev_low <= prev_ema_50 and close_price > ema_50 and rsi_filter and macd_filter:
                 stop_loss = min(support, latest['Low'] * 0.999) # Below support level
                 return {
                     'action': 'BUY',
                     'entry': close_price,
                     'stop_loss': stop_loss,
-                    'reason': 'Uptrend EMA 50 Support Bounce'
+                    'reason': 'Uptrend EMA 50 Bounce (RSI & MACD Confirmed)'
                 }
 
         # 2. Bearish Setup (Downtrend: EMA 50 < EMA 200)
@@ -49,14 +56,18 @@ class JohnMurphyStrategy:
             prev_high = previous['High']
             prev_ema_50 = previous['EMA_50']
             
+            # Additional Filters
+            rsi_filter = rsi > 30  # Not oversold
+            macd_filter = macd_line < macd_signal  # Bearish MACD confirmation
+            
             # EMA 50 rejection or Resistance level rejection
-            if prev_high >= prev_ema_50 and close_price < ema_50:
+            if prev_high >= prev_ema_50 and close_price < ema_50 and rsi_filter and macd_filter:
                 stop_loss = max(resistance, latest['High'] * 1.001) # Above resistance level
                 return {
                     'action': 'SELL',
                     'entry': close_price,
                     'stop_loss': stop_loss,
-                    'reason': 'Downtrend EMA 50 Resistance Rejection'
+                    'reason': 'Downtrend EMA 50 Rejection (RSI & MACD Confirmed)'
                 }
 
         return None

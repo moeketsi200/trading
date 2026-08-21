@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading System Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-chart-line"></i>
+                <h2>QuantumTrade</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#" id="nav-dashboard"><i class="fa-solid fa-house"></i> Dashboard</a></li>
+                    <li><a href="#" id="nav-scanner"><i class="fa-solid fa-satellite-dish"></i> Live Scanner</a></li>
+                    <li><a href="#" id="nav-backtest"><i class="fa-solid fa-flask"></i> Backtest Engine</a></li>
+                </ul>
+            </nav>
+            <div class="status-indicator">
+                <div class="dot active"></div> System Online
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <h1>Dashboard Overview</h1>
+                <div class="user-profile">
+                    <span>Admin</span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <!-- Stats Row -->
+            <div class="stats-grid" id="portfolio-stats">
+                <div class="stat-card glass">
+                    <h3>Total Equity</h3>
+                    <div class="value" id="equity-val">$0.00</div>
+                    <div class="trend positive"><i class="fa-solid fa-arrow-up"></i> 0.00%</div>
+                </div>
+                <div class="stat-card glass">
+                    <h3>Win Rate</h3>
+                    <div class="value" id="winrate-val">0%</div>
+                    <div class="trend neutral">0 Trades</div>
+                </div>
+                <div class="stat-card glass">
+                    <h3>Risk Per Trade</h3>
+                    <div class="value" id="risk-val">1%</div>
+                    <div class="trend neutral">Target R:R 1:3</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content Areas -->
+            <div class="content-sections">
+                <!-- Backtest Chart Section -->
+                <section class="chart-section glass" id="chart-container">
+                    <div class="section-header">
+                        <h2>Equity Curve (Backtest)</h2>
+                        <button id="run-backtest-btn" class="btn primary">Run Backtest</button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="equityChart"></canvas>
+                        <div id="backtest-loader" class="loader-container hidden">
+                            <div class="spinner"></div>
+                            <p>Running Simulation...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Signals Section -->
+                <section class="signals-section glass" id="signals-container">
+                    <div class="section-header">
+                        <h2>Live Trade Signals</h2>
+                        <div>
+                            <button id="run-scan-fast-btn" class="btn secondary">Fast Scan (EMA 5/15)</button>
+                            <button id="run-scan-btn" class="btn primary">Scan Market</button>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="signals-table">
+                            <thead>
+                                <tr>
+                                    <th>Pair</th>
+                                    <th>Action</th>
+                                    <th>Entry</th>
+                                    <th>Stop Loss</th>
+                                    <th>Take Profit</th>
+                                    <th>Risk ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="signals-body">
+                                <tr>
+                                    <td colspan="6" class="empty-state">No signals found. Click "Scan Market" to search for setups.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="scan-loader" class="loader-container hidden">
+                            <div class="spinner"></div>
+                            <p>Scanning Watchlist...</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Live Pair Chart Section -->
+                <section class="chart-section glass" id="tv-chart-section" style="display:none;">
+                    <div class="section-header">
+                        <h2 id="tv-chart-title">Live Pair Chart</h2>
+                    </div>
+                    <div class="chart-wrapper" id="tv-chart-container">
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -61,6 +61,20 @@ class MarketDataEngine:
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
         df['ATR_14'] = tr.rolling(window=14).mean()
         
+        # Calculate RSI (14)
+        delta = df['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+        rs = gain / loss
+        df['RSI_14'] = 100 - (100 / (1 + rs))
+        df['RSI_14'] = df['RSI_14'].fillna(50) # Fallback for NaN
+        
+        # Calculate MACD
+        ema_12 = df['Close'].ewm(span=12, adjust=False).mean()
+        ema_26 = df['Close'].ewm(span=26, adjust=False).mean()
+        df['MACD_Line'] = ema_12 - ema_26
+        df['MACD_Signal'] = df['MACD_Line'].ewm(span=9, adjust=False).mean()
+        
         # Trend Status
         df['Uptrend'] = df['EMA_50'] > df['EMA_200']
         df['Downtrend'] = df['EMA_50'] < df['EMA_200']

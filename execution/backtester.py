@@ -68,9 +68,10 @@ class PropFirmBacktester:
                 valid_signal = self.news_handler.process_trade_signal(raw_signal)
                 
                 if valid_signal:
+                    atr = current_bar.get('ATR_14', 0.0015)
                     entry = valid_signal['entry']
                     sl = valid_signal['stop_loss']
-                    pos_plan = self.risk_manager.calculate_position_size(entry, sl)
+                    pos_plan = self.risk_manager.calculate_position_size(entry, sl, atr=atr)
                     if pos_plan:
                         position = {
                             'action': valid_signal['action'],

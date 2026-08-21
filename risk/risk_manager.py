@@ -42,21 +42,31 @@ class RiskManager:
         return True
 
     def calculate_position_size(
-        self, entry_price: float, stop_loss_price: float, pip_value_per_lot: float = 10.0
+        self, entry_price: float, stop_loss_price: float, pip_value_per_lot: float = 10.0, atr: Optional[float] = None
     ) -> Optional[Dict[str, float]]:
         """
         Calculates position lot size and Take Profit level using strict 1% risk rule and 1:3 R:R ratio.
+        Dynamic ATR-based Stop Loss is applied if atr is provided.
         """
         if not self.is_trading_allowed():
             return None
 
-        # Distance to Stop Loss in price units and pips (assuming 4-digit / 5-digit Forex pricing)
-        sl_distance = abs(entry_price - stop_loss_price)
+        # Use ATR for dynamic stop loss if provided, otherwise fallback to Support/Resistance distance
+        if atr is not None and atr > 0:
+            sl_distance = atr * 1.5
+            if stop_loss_price < entry_price:  # Long Trade
+                stop_loss_price = entry_price - sl_distance
+            else:                              # Short Trade
+                stop_loss_price = entry_price + sl_distance
+        else:
+            sl_distance = abs(entry_price - stop_loss_price)
+
         if sl_distance <= 0:
             return None
             
-        # Convert price distance to pips (1 pip = 0.0001 for EUR/USD)
-        pips_at_risk = sl_distance / 0.0001
+        # Determine pip scaling factor dynamically based on asset price (Crypto/Indices vs Forex)
+        pip_scale = 0.1 if entry_price > 1000 else 0.0001
+        pips_at_risk = sl_distance / pip_scale
         
         # Risk amount in currency (1% of current equity)
         dollar_risk = self.current_equity * config.RISK_PER_TRADE_PCT
@@ -64,7 +74,8 @@ class RiskManager:
         # Calculate Lot Size
         # Lot Size = (Dollar Risk) / (Pips at Risk * Pip Value per Standard Lot)
         lot_size = dollar_risk / (pips_at_risk * pip_value_per_lot)
-        lot_size = round(lot_size, 2)  # Standard lot rounding
+        lot_size = round(lot_size, 3) if entry_price > 1000 else round(lot_size, 2)
+
         
         # Calculate Take Profit at 1:3 Risk-to-Reward Ratio
         tp_distance = sl_distance * config.MIN_RISK_REWARD_RATIO

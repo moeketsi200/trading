@@ -4,6 +4,7 @@ Sends HTML and Plaintext email alerts whenever a new trade signal is detected.
 """
 import os
 import smtplib
+import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from typing import Dict
@@ -112,4 +113,41 @@ class EmailNotifier:
             
         except Exception as e:
             print(f"  [!] Failed to send email alert: {e}")
+            return False
+
+class TelegramNotifier:
+    def __init__(self):
+        self.bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
+        self.chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+        self.enabled = bool(self.bot_token and self.chat_id)
+
+    def send_trade_signal(self, rec: Dict) -> bool:
+        if not self.enabled:
+            return False
+            
+        url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
+        
+        emoji = "🟩" if rec['action'] == "BUY" else "🟥"
+        text = f"{emoji} <b>{rec['action']} {rec['pair']}</b>\n"
+        text += f"Tier: {rec['tier']}\n"
+        text += f"Entry: {rec['entry']:.5f}\n"
+        text += f"SL: {rec['stop_loss']:.5f}\n"
+        text += f"TP: {rec['take_profit']:.5f}\n"
+        text += f"Risk: ${rec['dollar_risk']:.2f} ({rec['lot_size']} Lots)\n"
+        text += f"Reason: {rec['reason']}\n"
+        
+        try:
+            response = requests.post(url, json={
+                "chat_id": self.chat_id,
+                "text": text,
+                "parse_mode": "HTML"
+            }, timeout=10)
+            if response.status_code == 200:
+                print(f"  [📲 TELEGRAM ALERT SENT] Pushed signal for {rec['pair']}")
+                return True
+            else:
+                print(f"  [!] Telegram error: {response.text}")
+                return False
+        except Exception as e:
+            print(f"  [!] Failed to send Telegram alert: {e}")
             return False

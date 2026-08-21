@@ -11,29 +11,21 @@ from data.market_data import MarketDataEngine
 from data.news_data import NewsDataEngine
 from strategy.john_murphy_strategy import JohnMurphyStrategy
 from strategy.news_handler import NewsExecutionHandler, ExecutionMode
-from utils.notifier import EmailNotifier
+import json
+import os
+from utils.notifier import EmailNotifier, TelegramNotifier
 from execution.mt5_bridge import MT5ExecutionBridge
 
-# Categorized MT5 Watchlist Tiers
-DEFAULT_WATCHLIST_EXPANDED = [
-    # Tier 1: Forex Majors & Gold (Recommended / Lowest Spreads)
-    {"name": "EUR/USD", "ticker": "EURUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "GBP/USD", "ticker": "GBPUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "USD/JPY", "ticker": "USDJPY=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "AUD/USD", "ticker": "AUDUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "USD/CAD", "ticker": "USDCAD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "USD/CHF", "ticker": "USDCHF=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "GOLD (XAU/USD)", "ticker": "GC=F", "tier": "Tier 1: Metal / Commodity", "rec": "RECOMMENDED (Post-News)"},
-    
-    # Tier 2: Forex Crosses / Minors
-    {"name": "EUR/GBP", "ticker": "EURGBP=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "GBP/JPY", "ticker": "GBPJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "EUR/JPY", "ticker": "EURJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    
-    # Tier 3: Equity Indices
-    {"name": "NASDAQ (NAS100)", "ticker": "^NDX", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},
-    {"name": "US30 (DOW JONES)", "ticker": "^DJI", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},
-]
+def load_watchlist():
+    filepath = os.path.join(os.path.dirname(__file__), 'config', 'watchlist.json')
+    try:
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print("[!] Warning: config/watchlist.json not found. Using empty watchlist.")
+        return []
+
+DEFAULT_WATCHLIST_EXPANDED = load_watchlist()
 
 class MarketScanner:
     def __init__(self, watchlist: List[Dict] = DEFAULT_WATCHLIST_EXPANDED, balance: float = config.INITIAL_BALANCE):
@@ -44,6 +36,7 @@ class MarketScanner:
         self.news_engine = NewsDataEngine()
         self.news_handler = NewsExecutionHandler(self.news_engine)
         self.notifier = EmailNotifier()
+        self.telegram = TelegramNotifier()
         self.mt5_bridge = MT5ExecutionBridge()
 
     def calculate_trade_duration(self, df: pd.DataFrame, entry: float, take_profit: float) -> Dict[str, str]:
@@ -105,9 +98,11 @@ class MarketScanner:
                 valid_signal = self.news_handler.process_trade_signal(raw_signal)
                 
                 if valid_signal:
+                    latest = df.iloc[-1]
+                    atr = latest.get('ATR_14', 0.0015)
                     entry = valid_signal['entry']
                     sl = valid_signal['stop_loss']
-                    pos_plan = self.risk_manager.calculate_position_size(entry, sl)
+                    pos_plan = self.risk_manager.calculate_position_size(entry, sl, atr=atr)
                     
                     if pos_plan:
                         pips_sl = abs(entry - sl) / 0.0001
@@ -131,6 +126,7 @@ class MarketScanner:
                         recommendations.append(rec)
                         self.print_signal_card(rec)
                         self.notifier.send_trade_signal_email(rec)
+                        self.telegram.send_trade_signal(rec)
                         self.mt5_bridge.place_automated_order(rec)
                     else:
                         print(f"  [-] {name:<16} ({tier}) : Setup detected but rejected by Risk Engine.")
@@ -180,6 +176,7 @@ class MarketScanner:
         print("\n[+] DEMO SIGNAL CARD PREVIEW (Triggered when live setup occurs):\n")
         self.print_signal_card(demo_rec)
         self.notifier.send_trade_signal_email(demo_rec)
+        self.telegram.send_trade_signal(demo_rec)
         print()
 
     def execute_demo_trade(self):
@@ -209,6 +206,7 @@ class MarketScanner:
         print("=" * 70)
         self.print_signal_card(demo_rec)
         self.notifier.send_trade_signal_email(demo_rec)
+        self.telegram.send_trade_signal(demo_rec)
         self.mt5_bridge.place_automated_order(demo_rec)
         print("=" * 70 + "\n")
 

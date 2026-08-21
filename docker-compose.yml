@@ -10,6 +10,9 @@ services:
     volumes:
       # Mount code directory for live hot-reloading / development across OS
       - .:/app
+    ports:
+      - "5000:5000"
+    command: python api.py
     environment:
       - PYTHONUNBUFFERED=1
       - ENV=production
