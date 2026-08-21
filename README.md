@@ -8,6 +8,8 @@ Designed to target **R4,000 ZAR/month (~$220 USD)** on a $5,000 prop-firm challe
 
 ## ✨ Features
 
+- **Web Dashboard & API** — Interactive frontend to monitor signals and run backtests via a Flask REST API
+- **Signal Storage** — Persists generated trade signals to a local SQLite database
 - **Multi-Pair Market Scanner** — Scans 12 instruments across Forex Majors, Minors, Gold, and US Indices
 - **John Murphy Strategy Engine** — EMA 50/200 trend filter + Support/Resistance bounce/rejection entries
 - **3-Mode News Execution Handler** — Automatically switches between `NORMAL`, `HUNTER`, and `SHIELD` modes around high-impact news events
@@ -24,10 +26,14 @@ Designed to target **R4,000 ZAR/month (~$220 USD)** on a $5,000 prop-firm challe
 
 ```
 trading/
+├── api.py                    # Flask REST API and web dashboard server
 ├── main.py                   # CLI entrypoint (scan, backtest, demo modes)
 ├── scanner.py                # MarketScanner — core scanning & signal output engine
+├── signals.db                # SQLite database for storing generated trade signals
+├── dashboard/                # Web Dashboard frontend (HTML, JS, CSS)
 ├── config/
-│   └── config.py             # Global trading parameters (risk, timeframes, targets)
+│   ├── config.py             # Global trading parameters (risk, timeframes, targets)
+│   └── watchlist.json        # JSON configuration for target pairs/instruments
 ├── data/
 │   ├── market_data.py        # Historical candle fetcher + technical indicator calculator
 │   └── news_data.py          # Economic calendar / high-impact news data engine
@@ -105,7 +111,16 @@ Edit `.env` to set your credentials (see [Environment Variables](#-environment-v
 
 ## 🧰 Usage
 
-### Run the Market Scanner
+For a detailed explanation of the system's underlying structure, please refer to the [System Architecture Document](ARCHITECTURE.md).
+
+### Launch the Web Dashboard (Recommended)
+Starts the Flask REST API and serves the interactive web dashboard, accessible in your browser at `http://localhost:5000`.
+
+```bash
+python3 api.py
+```
+
+### Run the Market Scanner (CLI)
 Scans all watchlist pairs and prints actionable trade recommendations.
 
 ```bash
