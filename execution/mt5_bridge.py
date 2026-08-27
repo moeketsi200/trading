@@ -23,6 +23,9 @@ class MT5ExecutionBridge:
         self.password = os.getenv("MT5_PASSWORD", "")
         self.server = os.getenv("MT5_SERVER", "MetaQuotes-Demo")
         self.web_api_url = os.getenv("MT5_WEB_API_URL", "https://trade.mql5.com/trade")
+        self.metaapi_token = os.getenv("METAAPI_TOKEN", "")
+        self.metaapi_account_id = os.getenv("METAAPI_ACCOUNT_ID", "")
+        self.metaapi_url = os.getenv("METAAPI_URL", "https://mt-client-api-v1.new-york.agiliumtrade.ai")
 
     def connect(self) -> bool:
         """
@@ -101,34 +104,48 @@ class MT5ExecutionBridge:
 
     def _send_web_api_order(self, symbol: str, rec: Dict) -> Optional[Dict]:
         """
-        Sends order request via MT5 Web Gateway API endpoint.
+        Sends order request via MetaAPI Cloud REST API (Linux / Multi-Platform fallback).
         """
-        if not self.login or not self.password:
-            print("[!] MT5 Web Gateway skipped: Login/Password missing in .env")
+        if not self.metaapi_token or not self.metaapi_account_id:
+            print("[!] MetaAPI Gateway skipped: METAAPI_TOKEN or METAAPI_ACCOUNT_ID missing in .env")
             return None
 
+        endpoint = f"{self.metaapi_url}/users/current/accounts/{self.metaapi_account_id}/trade"
+        headers = {
+            "auth-token": self.metaapi_token,
+            "Content-Type": "application/json"
+        }
+        
+        # MetaAPI expects ORDER_TYPE_BUY or ORDER_TYPE_SELL
+        action_type = "ORDER_TYPE_BUY" if rec['action'] == 'BUY' else "ORDER_TYPE_SELL"
+
         payload = {
-            "account": self.login,
-            "password": self.password,
-            "server": self.server,
+            "actionType": action_type,
             "symbol": symbol,
-            "action": rec['action'],
             "volume": float(rec['lot_size']),
-            "stop_loss": float(rec['stop_loss']),
-            "take_profit": float(rec['take_profit']),
-            "comment": "Python Quant Web Auto Order"
+            "stopLoss": float(rec['stop_loss']),
+            "takeProfit": float(rec['take_profit']),
+            "stopLossUnits": "ABSOLUTE_PRICE",
+            "takeProfitUnits": "ABSOLUTE_PRICE",
+            "comment": "Python Quant MetaAPI Auto Order"
         }
 
         try:
-            # Simulate/Execute web gateway post
-            print(f"[🚀 MT5 WEB GATEWAY DISPATCHED] Account: {self.login} | Symbol: {symbol} | Action: {rec['action']} | Lots: {rec['lot_size']} | SL: {rec['stop_loss']:.5f} | TP: {rec['take_profit']:.5f}")
+            print(f"[⏳ METAAPI DISPATCHING] Account: {self.metaapi_account_id} | Symbol: {symbol} | Action: {action_type} | Lots: {rec['lot_size']} | SL: {rec['stop_loss']:.5f} | TP: {rec['take_profit']:.5f}")
+            response = requests.post(endpoint, headers=headers, json=payload, timeout=10)
+            response.raise_for_status()
+            result = response.json()
+            
+            print(f"[🚀 METAAPI ORDER EXECUTED] Result: {result}")
             return {
-                "status": "DISPATCHED_TO_MT5_WEB_DEMO",
+                "status": "EXECUTED_VIA_METAAPI",
                 "symbol": symbol,
-                "login": self.login
+                "metaapi_response": result
             }
         except Exception as e:
-            print(f"[!] MT5 Web Gateway error: {e}")
+            print(f"[!] MetaAPI Execution Error: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                print(f"[!] MetaAPI Error Details: {e.response.text}")
             return None
 
     def shutdown(self):
