@@ -23,6 +23,24 @@ class TradingConfig:
     SLOW_EMA_PERIOD: int = 200
     SR_LOOKBACK_PERIODS: int = 50
     
+    # Oscillators & Filters
+    RSI_PERIOD: int = 14
+    MACD_FAST: int = 12
+    MACD_SLOW: int = 26
+    MACD_SIGNAL: int = 9
+    VOLUME_MA_PERIOD: int = 20
+    BB_PERIOD: int = 20
+    BB_STD_DEV: float = 2.0
+    MIN_BB_WIDTH_PCT: float = 0.002
+    
+    # Dynamic Risk Parameters
+    ATR_SL_MULTIPLIER: float = 1.5
+    
+    # Intraday Swing Mode Parameters
+    INTRADAY_SWING_MODE: bool = True
+    TRAILING_STOP_TRIGGER_RR: float = 2.0
+    RUNNER_MAX_RR: float = 10.0
+    
     # News Handler Settings
     PRE_NEWS_SHIELD_MINUTES: int = 30  # Pause 30 minutes before high-impact news
     POST_NEWS_HUNTER_MINUTES: int = 30 # Wait 30 minutes after news before hunting trend

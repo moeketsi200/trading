@@ -61,19 +61,29 @@ class MarketDataEngine:
         tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
         df['ATR_14'] = tr.rolling(window=14).mean()
         
-        # Calculate RSI (14)
+        # Calculate RSI
         delta = df['Close'].diff()
-        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+        gain = (delta.where(delta > 0, 0)).rolling(window=config.RSI_PERIOD).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=config.RSI_PERIOD).mean()
         rs = gain / loss
-        df['RSI_14'] = 100 - (100 / (1 + rs))
-        df['RSI_14'] = df['RSI_14'].fillna(50) # Fallback for NaN
+        df['RSI'] = 100 - (100 / (1 + rs))
+        df['RSI'] = df['RSI'].fillna(50) # Fallback for NaN
         
         # Calculate MACD
-        ema_12 = df['Close'].ewm(span=12, adjust=False).mean()
-        ema_26 = df['Close'].ewm(span=26, adjust=False).mean()
-        df['MACD_Line'] = ema_12 - ema_26
-        df['MACD_Signal'] = df['MACD_Line'].ewm(span=9, adjust=False).mean()
+        ema_fast = df['Close'].ewm(span=config.MACD_FAST, adjust=False).mean()
+        ema_slow = df['Close'].ewm(span=config.MACD_SLOW, adjust=False).mean()
+        df['MACD_Line'] = ema_fast - ema_slow
+        df['MACD_Signal'] = df['MACD_Line'].ewm(span=config.MACD_SIGNAL, adjust=False).mean()
+        
+        # Calculate Volume MA
+        df['Volume_MA'] = df['Volume'].rolling(window=config.VOLUME_MA_PERIOD).mean()
+        
+        # Calculate Bollinger Bands
+        bb_sma = df['Close'].rolling(window=config.BB_PERIOD).mean()
+        bb_std = df['Close'].rolling(window=config.BB_PERIOD).std()
+        df['BB_Upper'] = bb_sma + (bb_std * config.BB_STD_DEV)
+        df['BB_Lower'] = bb_sma - (bb_std * config.BB_STD_DEV)
+        df['BB_Width'] = (df['BB_Upper'] - df['BB_Lower']) / df['Close']
         
         # Trend Status
         df['Uptrend'] = df['EMA_50'] > df['EMA_200']

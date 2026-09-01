@@ -53,7 +53,7 @@ class RiskManager:
 
         # Use ATR for dynamic stop loss if provided, otherwise fallback to Support/Resistance distance
         if atr is not None and atr > 0:
-            sl_distance = atr * 1.5
+            sl_distance = atr * config.ATR_SL_MULTIPLIER
             if stop_loss_price < entry_price:  # Long Trade
                 stop_loss_price = entry_price - sl_distance
             else:                              # Short Trade
@@ -77,8 +77,19 @@ class RiskManager:
         lot_size = round(lot_size, 3) if entry_price > 1000 else round(lot_size, 2)
 
         
-        # Calculate Take Profit at 1:3 Risk-to-Reward Ratio
-        tp_distance = sl_distance * config.MIN_RISK_REWARD_RATIO
+        # Calculate Take Profit and Break-Even Trigger
+        if getattr(config, 'INTRADAY_SWING_MODE', False):
+            target_rr = config.RUNNER_MAX_RR
+            be_distance = sl_distance * config.TRAILING_STOP_TRIGGER_RR
+            if entry_price > stop_loss_price:
+                break_even_trigger = entry_price + be_distance
+            else:
+                break_even_trigger = entry_price - be_distance
+        else:
+            target_rr = config.MIN_RISK_REWARD_RATIO
+            break_even_trigger = None
+            
+        tp_distance = sl_distance * target_rr
         if entry_price > stop_loss_price:  # Long Trade
             take_profit_price = entry_price + tp_distance
         else:                              # Short Trade
@@ -90,7 +101,8 @@ class RiskManager:
             "take_profit": take_profit_price,
             "lot_size": max(0.01, lot_size),  # Minimum 0.01 micro-lot
             "dollar_risk": dollar_risk,
-            "reward_risk_ratio": config.MIN_RISK_REWARD_RATIO
+            "reward_risk_ratio": target_rr,
+            "break_even_trigger": break_even_trigger
         }
 
     def reset_daily_circuit_breaker(self):

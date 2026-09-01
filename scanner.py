@@ -121,7 +121,8 @@ class MarketScanner:
                             "lot_size": pos_plan['lot_size'],
                             "dollar_risk": pos_plan['dollar_risk'],
                             "reason": valid_signal['reason'],
-                            "duration": duration_info
+                            "duration": duration_info,
+                            "break_even_trigger": pos_plan.get('break_even_trigger')
                         }
                         recommendations.append(rec)
                         self.print_signal_card(rec)
@@ -167,6 +168,7 @@ class MarketScanner:
             "lot_size": 0.05,
             "dollar_risk": 50.00,
             "reason": "Uptrend EMA 50 Support Bounce",
+            "break_even_trigger": 4441.50,
             "duration": {
                 "style": "Day Trade (1H Timeframe)",
                 "estimated_duration": "3 to 7 Hours",
@@ -194,6 +196,7 @@ class MarketScanner:
             "lot_size": 0.01,
             "dollar_risk": 5.00,
             "reason": "Demo Order Execution Test",
+            "break_even_trigger": 1.16360,
             "duration": {
                 "style": "Day Trade (1H Timeframe)",
                 "estimated_duration": "4 to 8 Hours",
@@ -220,7 +223,14 @@ class MarketScanner:
         print(f"│  Action               : {rec['action']} LIMIT / MARKET".ljust(69) + "│")
         print(f"│  Entry Price          : {rec['entry']:.5f}".ljust(69) + "│")
         print(f"│  Stop Loss            : {rec['stop_loss']:.5f} ({rec['sl_pips']:.1f} pips)".ljust(69) + "│")
-        print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:3 R:R Target)".ljust(69) + "│")
+        
+        if rec.get("break_even_trigger"):
+            print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:10 R:R Runner)".ljust(69) + "│")
+            print(f"│  Trade Management     : Move SL to Break-Even at {rec['break_even_trigger']:.5f}".ljust(69) + "│")
+            print(f"│  Trailing Stop        : Trail SL behind 1H EMA 50 after Break-Even".ljust(69) + "│")
+        else:
+            print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:3 R:R Target)".ljust(69) + "│")
+            
         print(f"│  Max Risk (1%)        : ${rec['dollar_risk']:.2f}".ljust(69) + "│")
         print(f"│  Recommended Lots     : {rec['lot_size']} Lots (Micro/Standard)".ljust(69) + "│")
         print(f"│  Signal Rationale     : {rec['reason']}".ljust(69) + "│")
