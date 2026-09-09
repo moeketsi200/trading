@@ -14,12 +14,18 @@ class NewsDataEngine:
             "Interest Rate Decision", "FOMC", "Fed Chair Press Conference",
             "ECB Press Conference", "Unemployment Rate"
         ]
+        self._cached_events = None
+        self._last_fetch = None
 
     def fetch_upcoming_high_impact_events(self) -> List[Dict]:
         """
         Fetches live high-impact economic news events from public calendar feeds (ForexFactory JSON feed).
         No API key required!
         """
+        if self._cached_events is not None and self._last_fetch is not None:
+            if (datetime.utcnow() - self._last_fetch).total_seconds() < 3600:
+                return self._cached_events
+
         events = []
         try:
             # Public economic calendar feed endpoint (ForexFactory weekly JSON feed)
@@ -42,6 +48,8 @@ class NewsDataEngine:
             # Fallback to local calendar check if internet or endpoint is slow
             pass
 
+        self._cached_events = events
+        self._last_fetch = datetime.utcnow()
         return events
 
     def minutes_until_next_high_impact_event(self) -> float:

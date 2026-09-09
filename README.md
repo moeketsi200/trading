@@ -235,7 +235,7 @@ chmod +x run_scanner_cron.sh
 Add to crontab (`crontab -e`) to scan every hour during market hours:
 
 ```
-0 * * * 1-5 /path/to/trading/run_scanner_cron.sh >> /path/to/trading/scanner.log 2>&1
+0 * * * 1-5 /path/to/trading/run_scanner_cron.sh >> /path/to/trading/logs/scanner.log 2>&1
 ```
 
 ---
