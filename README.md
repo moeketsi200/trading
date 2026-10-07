@@ -123,6 +123,20 @@ cp .env.example .env
 
 Edit `.env` to set your credentials (see [Environment Variables](#-environment-variables) below).
 
+If you want Telegram alerts, set:
+
+```dotenv
+ENABLE_TELEGRAM_ALERTS=true
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_chat_id_here
+```
+
+Then test it with:
+
+```bash
+python3 main.py --telegram-test
+```
+
 ---
 
 ## 🧰 Usage
@@ -211,9 +225,16 @@ SMTP_PORT=587
 SENDER_EMAIL=your_email@gmail.com
 SENDER_PASSWORD=your_app_password_here    # Use a Gmail App Password, not your main password
 RECIPIENT_EMAIL=your_personal_email@gmail.com
+
+# Telegram Alerts (Optional)
+ENABLE_TELEGRAM_ALERTS=false
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+TELEGRAM_CHAT_ID=your_telegram_chat_id_here
 ```
 
 > **Note:** To use Gmail, enable 2FA on your Google account and generate an **App Password** at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+>
+> To configure Telegram, create a bot via `@BotFather`, copy the bot token, and use a private message or group to discover the chat ID. Once yours is set, run `python3 main.py --telegram-test` to verify the bot can send messages.
 
 ---
 

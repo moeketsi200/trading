@@ -123,14 +123,41 @@ class TelegramNotifier:
     def __init__(self):
         self.bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
         self.chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
-        self.enabled = bool(self.bot_token and self.chat_id)
+        self.enabled = (
+            os.getenv("ENABLE_TELEGRAM_ALERTS", "false").lower() == "true"
+            and bool(self.bot_token)
+            and bool(self.chat_id)
+        )
+
+    def send_test_message(self, text: str = "✅ Telegram notifications are active.") -> bool:
+        if not self.enabled:
+            return False
+
+        try:
+            response = requests.post(
+                f"https://api.telegram.org/bot{self.bot_token}/sendMessage",
+                json={
+                    "chat_id": self.chat_id,
+                    "text": text,
+                    "parse_mode": "HTML",
+                },
+                timeout=10,
+            )
+            if response.status_code == 200:
+                print("  [📲 TELEGRAM TEST SENT]")
+                return True
+            print(f"  [!] Telegram test error: {response.text}")
+            return False
+        except Exception as e:
+            print(f"  [!] Failed to send Telegram test message: {e}")
+            return False
 
     def send_trade_signal(self, rec: Dict) -> bool:
         if not self.enabled:
             return False
-            
+
         url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
-        
+
         emoji = "🟩" if rec['action'] == "BUY" else "🟥"
         text = f"{emoji} <b>{rec['action']} {rec['pair']}</b>\n"
         text += f"Tier: {rec['tier']}\n"
@@ -140,7 +167,7 @@ class TelegramNotifier:
         text += f"TP: {rec['take_profit']:.5f}\n"
         text += f"Risk: ${rec['dollar_risk']:.2f} ({rec['lot_size']} Lots)\n"
         text += f"Reason: {rec['reason']}\n"
-        
+
         try:
             response = requests.post(url, json={
                 "chat_id": self.chat_id,

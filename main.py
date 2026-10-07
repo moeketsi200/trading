@@ -10,6 +10,7 @@ def main():
     parser.add_argument("--fast-scan", action="store_true", help="Run hyper-sensitive test scanner (EMA 5/15) to force signal testing")
     parser.add_argument("--demo-signal", action="store_true", help="Preview sample trade recommendation card formatting")
     parser.add_argument("--demo-order", action="store_true", help="Execute a test trade on MT5 Demo Account")
+    parser.add_argument("--telegram-test", action="store_true", help="Send a test notification to the configured Telegram channel")
     parser.add_argument("--backtest", action="store_true", help="Run backtest simulation engine on EUR/USD")
     args = parser.parse_args()
 
@@ -36,6 +37,16 @@ def main():
     if args.demo_signal:
         scanner = MarketScanner(balance=config.INITIAL_BALANCE)
         scanner.generate_demo_signal_card()
+        return 0
+
+    # If --telegram-test flag passed
+    if args.telegram_test:
+        scanner = MarketScanner(balance=config.INITIAL_BALANCE)
+        if not scanner.telegram.enabled:
+            print("[!] Telegram alerts are disabled. Set ENABLE_TELEGRAM_ALERTS=true and configure TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID in .env.")
+            return 1
+
+        scanner.telegram.send_test_message("<b>Trading bot connected.</b>\nSystem is now sending Telegram alerts for trade signals.")
         return 0
 
     # If --scan flag passed, run Market Scanner
