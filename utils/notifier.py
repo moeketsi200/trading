@@ -36,6 +36,7 @@ class EmailNotifier:
 
         subject = f"🔥 [TRADE SIGNAL] {rec['action']} {rec['pair']} - MT5 Execution Alert"
         dur = rec.get("duration", {})
+        rr = rec.get("reward_risk_ratio", 3)
         
         # Plaintext Email Body
         text_body = f"""
@@ -43,14 +44,15 @@ class EmailNotifier:
  NEW TRADING SIGNAL DETECTED: {rec['pair']}
 ============================================================
  Pair / Asset        : {rec['pair']} ({rec['tier']})
- MT5 Ticker          : {rec['ticker']}
+ MT5 Symbol          : {rec.get('mt5_symbol', rec['ticker'])}
  Action              : {rec['action']} LIMIT / MARKET
  Entry Price         : {rec['entry']:.5f}
  Stop Loss           : {rec['stop_loss']:.5f} ({rec['sl_pips']:.1f} pips)
- Take Profit         : {rec['take_profit']:.5f} (1:3 R:R Target)
+ Take Profit         : {rec['take_profit']:.5f} (1:{rr:g} R:R Target)
  Max Risk (1%)       : ${rec['dollar_risk']:.2f}
  Recommended Lots    : {rec['lot_size']} Lots
  Signal Rationale    : {rec['reason']}
+ Fundamental Bias    : {rec.get('fundamental_bias', 'N/A')}
 
 ------------------------------------------------------------
  DURATION & HOLDING TIME GUIDANCE
@@ -73,13 +75,15 @@ class EmailNotifier:
             <div style="padding: 20px;">
               <table style="width: 100%; border-collapse: collapse;">
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Pair / Asset:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec['pair']} ({rec['tier']})</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>MT5 Symbol:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec.get('mt5_symbol', rec['ticker'])}</td></tr>
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Action:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee; color: {'#2e7d32' if rec['action'] == 'BUY' else '#c62828'}; font-weight: bold;">{rec['action']}</td></tr>
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Entry Price:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec['entry']:.5f}</td></tr>
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Stop Loss:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec['stop_loss']:.5f} ({rec['sl_pips']:.1f} pips)</td></tr>
-                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Take Profit:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec['take_profit']:.5f} (1:3 Target)</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Take Profit:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec['take_profit']:.5f} (1:{rr:g} Target)</td></tr>
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Max Risk (1%):</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${rec['dollar_risk']:.2f}</td></tr>
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Recommended Lots:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>{rec['lot_size']} Lots</b></td></tr>
                 <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Rationale:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec['reason']}</td></tr>
+                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><b>Fundamental Bias:</b></td><td style="padding: 8px; border-bottom: 1px solid #eee;">{rec.get('fundamental_bias', 'N/A')}</td></tr>
               </table>
               
               <div style="margin-top: 20px; padding: 15px; background: #e8eaf6; border-radius: 6px;">
@@ -130,6 +134,7 @@ class TelegramNotifier:
         emoji = "🟩" if rec['action'] == "BUY" else "🟥"
         text = f"{emoji} <b>{rec['action']} {rec['pair']}</b>\n"
         text += f"Tier: {rec['tier']}\n"
+        text += f"MT5: {rec.get('mt5_symbol', rec['ticker'])}\n"
         text += f"Entry: {rec['entry']:.5f}\n"
         text += f"SL: {rec['stop_loss']:.5f}\n"
         text += f"TP: {rec['take_profit']:.5f}\n"

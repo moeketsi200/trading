@@ -13,6 +13,7 @@ Designed to target **R4,000 ZAR/month (~$220 USD)** on a $5,000 prop-firm challe
 - **Multi-Pair Market Scanner** — Scans 12 instruments across Forex Majors, Minors, Gold, and US Indices
 - **John Murphy Strategy Engine** — EMA 50/200 trend filter + Support/Resistance bounce/rejection entries
 - **3-Mode News Execution Handler** — Automatically switches between `NORMAL`, `HUNTER`, and `SHIELD` modes around high-impact news events
+- **Manual Fundamental Bias Filter** — Optional currency bias map blocks technical signals that fight your macro view
 - **ATR-Based Duration Guidance** — Estimates trade holding time (day trade vs swing trade) for each setup
 - **Risk Manager** — 1% risk per trade, 1:3 R:R minimum, 3% daily drawdown cap, 8% total drawdown limit
 - **MT5 Execution Bridge** — Places live/demo orders directly on MetaTrader 5
@@ -39,6 +40,7 @@ trading/
 │   └── news_data.py          # Economic calendar / high-impact news data engine
 ├── strategy/
 │   ├── john_murphy_strategy.py  # EMA trend + S/R entry signal logic
+│   ├── fundamental_bias.py      # Manual macro-bias signal filter
 │   └── news_handler.py          # NORMAL / HUNTER / SHIELD mode switcher
 ├── risk/
 │   └── risk_manager.py       # Position sizing, drawdown limits, lot calculation
@@ -46,6 +48,7 @@ trading/
 │   ├── mt5_bridge.py         # MetaTrader 5 order placement bridge
 │   └── backtester.py         # Historical backtest simulation engine
 ├── utils/
+│   ├── market_symbols.py     # MT5 ticker and pip-size helpers
 │   └── notifier.py           # SMTP email alert system
 ├── Dockerfile                # Multi-platform container build
 ├── docker-compose.yml        # Docker Compose service definition
@@ -73,6 +76,19 @@ All core parameters live in [`config/config.py`](config/config.py):
 | `SLOW_EMA_PERIOD` | `200` | Long-term trend EMA |
 | `PRE_NEWS_SHIELD_MINUTES` | `30` | Minutes before news to activate SHIELD mode |
 | `POST_NEWS_HUNTER_MINUTES` | `30` | Minutes after news before resuming HUNTER mode |
+
+### Fundamental Bias
+
+The scanner does not guess fundamentals automatically. Set each currency in `FUNDAMENTAL_BIAS` to `bullish`, `bearish`, or `neutral` inside [`config/config.py`](config/config.py). The scanner converts that into pair direction:
+
+```python
+FUNDAMENTAL_BIAS = {
+    "USD": "bearish",
+    "JPY": "bullish",
+}
+```
+
+With those settings, `USD/JPY` will only allow `SELL` signals. If everything is `neutral`, the scanner behaves like a pure technical scanner.
 
 ---
 

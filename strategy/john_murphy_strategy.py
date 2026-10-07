@@ -43,7 +43,7 @@ class JohnMurphyStrategy:
             # Additional Filters
             rsi_filter = rsi < 40  # Pulled back, not overbought
             macd_filter = (macd_line > 0) and (macd_line > macd_signal)  # Strong Bullish MACD confirmation
-            vol_filter = volume > volume_ma  # Volume confirmation
+            vol_filter = True if volume_ma <= 0 or volume <= 0 else volume > volume_ma
             bb_filter = bb_width > config.MIN_BB_WIDTH_PCT  # Volatility confirmation
             
             # EMA 50 bounce or Support level bounce
@@ -64,7 +64,7 @@ class JohnMurphyStrategy:
             # Additional Filters
             rsi_filter = rsi > 60  # Pulled back, not oversold
             macd_filter = (macd_line < 0) and (macd_line < macd_signal)  # Strong Bearish MACD confirmation
-            vol_filter = volume > volume_ma  # Volume confirmation
+            vol_filter = True if volume_ma <= 0 or volume <= 0 else volume > volume_ma
             bb_filter = bb_width > config.MIN_BB_WIDTH_PCT  # Volatility confirmation
             
             # EMA 50 rejection or Resistance level rejection

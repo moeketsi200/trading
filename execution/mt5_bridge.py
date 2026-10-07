@@ -6,6 +6,7 @@ import os
 import requests
 from typing import Dict, Optional
 from dotenv import load_dotenv
+from utils.market_symbols import mt5_symbol_from_market
 
 load_dotenv()
 
@@ -59,7 +60,7 @@ class MT5ExecutionBridge:
         if not self.enabled:
             return None
 
-        symbol = rec['pair'].replace("/", "").replace("=X", "").replace("GC=F", "XAUUSD")
+        symbol = rec.get('mt5_symbol') or mt5_symbol_from_market(rec.get('pair', ''), rec.get('ticker', ''))
 
         # 1. Try Native MT5 API first if running on Windows / Wine
         if HAS_MT5_NATIVE:
@@ -67,6 +68,13 @@ class MT5ExecutionBridge:
                 if not mt5.symbol_select(symbol, True):
                     print(f"[!] Symbol {symbol} not found in MT5 Market Watch.")
                     return None
+
+                if self._has_native_open_position(symbol):
+                    print(f"[i] MT5 duplicate guard: {symbol} already has an open position. New order skipped.")
+                    return {
+                        "status": "SKIPPED_DUPLICATE_POSITION",
+                        "symbol": symbol,
+                    }
 
                 order_type = mt5.ORDER_TYPE_BUY if rec['action'] == 'BUY' else mt5.ORDER_TYPE_SELL
                 price = mt5.symbol_info_tick(symbol).ask if rec['action'] == 'BUY' else mt5.symbol_info_tick(symbol).bid
@@ -101,6 +109,16 @@ class MT5ExecutionBridge:
 
         # 2. MT5 Web REST Gateway Fallback (Linux / Multi-Platform)
         return self._send_web_api_order(symbol, rec)
+
+    def _has_native_open_position(self, symbol: str) -> bool:
+        """Returns True when the active MT5 terminal already has an open position for symbol."""
+        if not HAS_MT5_NATIVE:
+            return False
+
+        positions = mt5.positions_get(symbol=symbol)
+        if positions is None:
+            return False
+        return len(positions) > 0
 
     def _send_web_api_order(self, symbol: str, rec: Dict) -> Optional[Dict]:
         """

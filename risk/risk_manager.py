@@ -4,6 +4,7 @@ Handles position sizing, Stop Loss / Take Profit calculations, and drawdown circ
 """
 from typing import Dict, Optional
 from config.config import config
+from utils.market_symbols import pip_size_for_symbol
 
 class RiskManager:
     def __init__(self, initial_balance: float = config.INITIAL_BALANCE):
@@ -42,7 +43,13 @@ class RiskManager:
         return True
 
     def calculate_position_size(
-        self, entry_price: float, stop_loss_price: float, pip_value_per_lot: float = 10.0, atr: Optional[float] = None
+        self,
+        entry_price: float,
+        stop_loss_price: float,
+        pip_value_per_lot: float = 10.0,
+        atr: Optional[float] = None,
+        symbol: str = "",
+        pip_size: Optional[float] = None,
     ) -> Optional[Dict[str, float]]:
         """
         Calculates position lot size and Take Profit level using strict 1% risk rule and 1:3 R:R ratio.
@@ -64,8 +71,8 @@ class RiskManager:
         if sl_distance <= 0:
             return None
             
-        # Determine pip scaling factor dynamically based on asset price (Crypto/Indices vs Forex)
-        pip_scale = 0.1 if entry_price > 1000 else 0.0001
+        # Determine pip scaling factor dynamically. JPY pairs use 0.01, not 0.0001.
+        pip_scale = pip_size or pip_size_for_symbol(symbol, entry_price)
         pips_at_risk = sl_distance / pip_scale
         
         # Risk amount in currency (1% of current equity)
@@ -102,7 +109,9 @@ class RiskManager:
             "lot_size": max(0.01, lot_size),  # Minimum 0.01 micro-lot
             "dollar_risk": dollar_risk,
             "reward_risk_ratio": target_rr,
-            "break_even_trigger": break_even_trigger
+            "break_even_trigger": break_even_trigger,
+            "pip_size": pip_scale,
+            "pips_at_risk": pips_at_risk,
         }
 
     def reset_daily_circuit_breaker(self):

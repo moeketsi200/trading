@@ -2,7 +2,7 @@
 Global Configuration for Automated Forex Trading System.
 """
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class TradingConfig:
@@ -44,5 +44,21 @@ class TradingConfig:
     # News Handler Settings
     PRE_NEWS_SHIELD_MINUTES: int = 30  # Pause 30 minutes before high-impact news
     POST_NEWS_HUNTER_MINUTES: int = 30 # Wait 30 minutes after news before hunting trend
+
+    # Fundamental Bias Filter
+    # Set a currency to "bullish", "bearish", or "neutral".
+    # Example: USD bearish + JPY bullish means USD/JPY should only allow SELL signals.
+    ENABLE_FUNDAMENTAL_BIAS_FILTER: bool = True
+    FUNDAMENTAL_BIAS: dict = field(default_factory=lambda: {
+        "USD": "neutral",
+        "EUR": "neutral",
+        "GBP": "neutral",
+        "JPY": "neutral",
+        "AUD": "neutral",
+        "NZD": "neutral",
+        "CAD": "neutral",
+        "CHF": "neutral",
+        "ZAR": "neutral",
+    })
     
 config = TradingConfig()

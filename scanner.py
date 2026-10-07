@@ -10,10 +10,12 @@ from risk.risk_manager import RiskManager
 from data.market_data import MarketDataEngine
 from data.news_data import NewsDataEngine
 from strategy.john_murphy_strategy import JohnMurphyStrategy
+from strategy.fundamental_bias import FundamentalBiasFilter
 from strategy.news_handler import NewsExecutionHandler, ExecutionMode
 import json
 import os
 from utils.notifier import EmailNotifier, TelegramNotifier
+from utils.market_symbols import mt5_symbol_from_market, pip_size_for_symbol
 from execution.mt5_bridge import MT5ExecutionBridge
 
 def load_watchlist():
@@ -33,11 +35,13 @@ class MarketScanner:
         self.balance = balance
         self.risk_manager = RiskManager(initial_balance=balance)
         self.strategy = JohnMurphyStrategy()
+        self.bias_filter = FundamentalBiasFilter(enabled=config.ENABLE_FUNDAMENTAL_BIAS_FILTER)
         self.news_engine = NewsDataEngine()
         self.news_handler = NewsExecutionHandler(self.news_engine)
         self.notifier = EmailNotifier()
         self.telegram = TelegramNotifier()
         self.mt5_bridge = MT5ExecutionBridge()
+        self._symbols_seen_this_scan = set()
 
     def calculate_trade_duration(self, df: pd.DataFrame, entry: float, take_profit: float) -> Dict[str, str]:
         """
@@ -82,12 +86,18 @@ class MarketScanner:
             return recommendations
 
         print("\n[+] Scanning MT5 watchlist categories for high-probability setups...\n")
+        self._symbols_seen_this_scan = set()
         
         for pair in self.watchlist:
             name = pair["name"]
             ticker = pair["ticker"]
             tier = pair["tier"]
             rec_status = pair["rec"]
+            mt5_symbol = mt5_symbol_from_market(name, ticker)
+
+            if mt5_symbol in self._symbols_seen_this_scan:
+                continue
+            self._symbols_seen_this_scan.add(mt5_symbol)
             
             try:
                 data_engine = MarketDataEngine(symbol=ticker)
@@ -95,22 +105,31 @@ class MarketScanner:
                 df = data_engine.calculate_technical_indicators(df, fast_mode=fast_mode)
                 
                 raw_signal = self.strategy.evaluate_signals(df)
-                valid_signal = self.news_handler.process_trade_signal(raw_signal)
+                biased_signal, bias_info, bias_block_reason = self.bias_filter.filter_signal(raw_signal, name, ticker)
+                valid_signal = self.news_handler.process_trade_signal(biased_signal)
                 
                 if valid_signal:
                     latest = df.iloc[-1]
                     atr = latest.get('ATR_14', 0.0015)
                     entry = valid_signal['entry']
                     sl = valid_signal['stop_loss']
-                    pos_plan = self.risk_manager.calculate_position_size(entry, sl, atr=atr)
+                    pip_size = pip_size_for_symbol(mt5_symbol, entry)
+                    pos_plan = self.risk_manager.calculate_position_size(
+                        entry,
+                        sl,
+                        atr=atr,
+                        symbol=mt5_symbol,
+                        pip_size=pip_size,
+                    )
                     
                     if pos_plan:
-                        pips_sl = abs(entry - sl) / 0.0001
+                        pips_sl = pos_plan.get('pips_at_risk') or abs(entry - pos_plan['stop_loss']) / pip_size
                         duration_info = self.calculate_trade_duration(df, entry, pos_plan['take_profit'])
                         
                         rec = {
                             "pair": name,
                             "ticker": ticker,
+                            "mt5_symbol": mt5_symbol,
                             "tier": tier,
                             "rec_status": rec_status,
                             "action": valid_signal['action'],
@@ -120,7 +139,9 @@ class MarketScanner:
                             "sl_pips": pips_sl,
                             "lot_size": pos_plan['lot_size'],
                             "dollar_risk": pos_plan['dollar_risk'],
+                            "reward_risk_ratio": pos_plan.get('reward_risk_ratio', config.MIN_RISK_REWARD_RATIO),
                             "reason": valid_signal['reason'],
+                            "fundamental_bias": bias_info["label"],
                             "duration": duration_info,
                             "break_even_trigger": pos_plan.get('break_even_trigger')
                         }
@@ -137,12 +158,14 @@ class MarketScanner:
                     close_p = latest['Close']
                     ema_50 = latest['EMA_50']
                     
-                    # Pip multiplier based on asset class (0.0001 for Forex, 0.1 for Gold/Indices)
-                    pip_scale = 0.1 if ("=" not in ticker or "GC=F" in ticker) else 0.0001
+                    pip_scale = pip_size_for_symbol(mt5_symbol, close_p)
                     pips_to_ema = abs(close_p - ema_50) / pip_scale
                     
                     proximity_str = f"{pips_to_ema:.1f} pips above EMA50 Support" if latest['Uptrend'] else f"{pips_to_ema:.1f} pips below EMA50 Resistance"
-                    print(f"  [•] {name:<16} ({tier:<22}) : No Signal (Trend: {trend:<9} | Price: {close_p:.5f} | Proximity: {proximity_str})")
+                    if bias_block_reason:
+                        print(f"  [-] {name:<16} ({tier:<22}) : Signal blocked ({bias_block_reason})")
+                    else:
+                        print(f"  [•] {name:<16} ({tier:<22}) : No Signal (Trend: {trend:<9} | Price: {close_p:.5f} | Proximity: {proximity_str} | Bias: {bias_info['label']})")
                     
             except Exception as e:
                 print(f"  [!] {name:<16} ({tier}) : Data fetch note ({e})")
@@ -158,6 +181,7 @@ class MarketScanner:
         demo_rec = {
             "pair": "GOLD (XAU/USD)",
             "ticker": "GC=F (or XAUUSD on MT5)",
+            "mt5_symbol": "XAUUSD",
             "tier": "Tier 1: Metal / Commodity",
             "rec_status": "RECOMMENDED (Post-News)",
             "action": "BUY",
@@ -167,7 +191,9 @@ class MarketScanner:
             "sl_pips": 105.0,
             "lot_size": 0.05,
             "dollar_risk": 50.00,
+            "reward_risk_ratio": 10.0,
             "reason": "Uptrend EMA 50 Support Bounce",
+            "fundamental_bias": "N/A",
             "break_even_trigger": 4441.50,
             "duration": {
                 "style": "Day Trade (1H Timeframe)",
@@ -177,8 +203,7 @@ class MarketScanner:
         }
         print("\n[+] DEMO SIGNAL CARD PREVIEW (Triggered when live setup occurs):\n")
         self.print_signal_card(demo_rec)
-        self.notifier.send_trade_signal_email(demo_rec)
-        self.telegram.send_trade_signal(demo_rec)
+        print("[i] Demo preview only. Email, Telegram, and MT5 execution were not triggered.")
         print()
 
     def execute_demo_trade(self):
@@ -186,6 +211,7 @@ class MarketScanner:
         demo_rec = {
             "pair": "EUR/USD",
             "ticker": "EURUSD",
+            "mt5_symbol": "EURUSD",
             "tier": "Tier 1: Forex Major",
             "rec_status": "DEMO TEST ORDER",
             "action": "BUY",
@@ -195,7 +221,9 @@ class MarketScanner:
             "sl_pips": 50.0,
             "lot_size": 0.01,
             "dollar_risk": 5.00,
+            "reward_risk_ratio": 3.0,
             "reason": "Demo Order Execution Test",
+            "fundamental_bias": "EUR:neutral / USD:neutral => neutral",
             "break_even_trigger": 1.16360,
             "duration": {
                 "style": "Day Trade (1H Timeframe)",
@@ -219,21 +247,22 @@ class MarketScanner:
         print("┌" + "─" * 68 + "┐")
         print(f"│ 🔥 [TRADE RECOMMENDATION: {rec['pair']}] ({rec['tier']})".ljust(69) + "│")
         print("├" + "─" * 68 + "┤")
-        print(f"│  MT5 Execution Ticker : {rec['ticker']}".ljust(69) + "│")
+        print(f"│  MT5 Execution Symbol : {rec.get('mt5_symbol', rec['ticker'])}".ljust(69) + "│")
         print(f"│  Action               : {rec['action']} LIMIT / MARKET".ljust(69) + "│")
         print(f"│  Entry Price          : {rec['entry']:.5f}".ljust(69) + "│")
         print(f"│  Stop Loss            : {rec['stop_loss']:.5f} ({rec['sl_pips']:.1f} pips)".ljust(69) + "│")
         
         if rec.get("break_even_trigger"):
-            print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:10 R:R Runner)".ljust(69) + "│")
+            print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:{rec.get('reward_risk_ratio', 10):g} R:R Runner)".ljust(69) + "│")
             print(f"│  Trade Management     : Move SL to Break-Even at {rec['break_even_trigger']:.5f}".ljust(69) + "│")
             print(f"│  Trailing Stop        : Trail SL behind 1H EMA 50 after Break-Even".ljust(69) + "│")
         else:
-            print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:3 R:R Target)".ljust(69) + "│")
+            print(f"│  Take Profit          : {rec['take_profit']:.5f} (1:{rec.get('reward_risk_ratio', 3):g} R:R Target)".ljust(69) + "│")
             
         print(f"│  Max Risk (1%)        : ${rec['dollar_risk']:.2f}".ljust(69) + "│")
         print(f"│  Recommended Lots     : {rec['lot_size']} Lots (Micro/Standard)".ljust(69) + "│")
         print(f"│  Signal Rationale     : {rec['reason']}".ljust(69) + "│")
+        print(f"│  Fundamental Bias     : {rec.get('fundamental_bias', 'N/A')}".ljust(69) + "│")
         print("├" + "─" * 68 + "┤")
         print("│ ⏱️ DURATION & HOLDING TIME GUIDANCE:".ljust(69) + "│")
         print(f"│  • Trade Style        : {dur['style']}".ljust(69) + "│")
