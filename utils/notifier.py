@@ -123,11 +123,11 @@ class TelegramNotifier:
     def __init__(self):
         self.bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
         self.chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
-        self.enabled = (
-            os.getenv("ENABLE_TELEGRAM_ALERTS", "false").lower() == "true"
-            and bool(self.bot_token)
-            and bool(self.chat_id)
-        )
+        alert_flag = os.getenv("ENABLE_TELEGRAM_ALERTS", "").lower()
+        if alert_flag == "false":
+            self.enabled = False
+        else:
+            self.enabled = bool(self.bot_token) and bool(self.chat_id)
 
     def send_test_message(self, text: str = "✅ Telegram notifications are active.") -> bool:
         if not self.enabled:

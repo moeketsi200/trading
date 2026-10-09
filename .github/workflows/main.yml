@@ -36,6 +36,7 @@ jobs:
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
           
           # Telegram Secrets
+          ENABLE_TELEGRAM_ALERTS: ${{ secrets.ENABLE_TELEGRAM_ALERTS || 'true' }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |

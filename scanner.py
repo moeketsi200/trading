@@ -203,7 +203,8 @@ class MarketScanner:
         }
         print("\n[+] DEMO SIGNAL CARD PREVIEW (Triggered when live setup occurs):\n")
         self.print_signal_card(demo_rec)
-        print("[i] Demo preview only. Email, Telegram, and MT5 execution were not triggered.")
+        self.notifier.send_trade_signal_email(demo_rec)
+        self.telegram.send_trade_signal(demo_rec)
         print()
 
     def execute_demo_trade(self):

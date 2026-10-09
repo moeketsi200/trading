@@ -41,19 +41,19 @@ class JohnMurphyStrategy:
             prev_ema_50 = previous['EMA_50']
             
             # Additional Filters
-            rsi_filter = rsi < 40  # Pulled back, not overbought
-            macd_filter = (macd_line > 0) and (macd_line > macd_signal)  # Strong Bullish MACD confirmation
-            vol_filter = True if volume_ma <= 0 or volume <= 0 else volume > volume_ma
-            bb_filter = bb_width > config.MIN_BB_WIDTH_PCT  # Volatility confirmation
+            rsi_filter = rsi < 70  # Not overbought
+            macd_filter = macd_line > macd_signal  # Bullish MACD confirmation
             
-            # EMA 50 bounce or Support level bounce
-            if prev_low <= prev_ema_50 and close_price > ema_50 and rsi_filter and macd_filter and vol_filter and bb_filter:
+            # EMA 50 bounce or Support level bounce (tested EMA50 and closed above)
+            ema_bounce = (prev_low <= prev_ema_50 or latest['Low'] <= ema_50) and close_price > ema_50
+            support_bounce = prev_low <= support and close_price > support
+            if (ema_bounce or support_bounce) and rsi_filter and macd_filter:
                 stop_loss = min(support, latest['Low'] * 0.999) # Below support level
                 return {
                     'action': 'BUY',
                     'entry': close_price,
                     'stop_loss': stop_loss,
-                    'reason': 'Uptrend EMA 50 Bounce (Confirmed)'
+                    'reason': 'Uptrend EMA 50 Support Bounce'
                 }
 
         # 2. Bearish Setup (Downtrend: EMA 50 < EMA 200)
@@ -62,19 +62,19 @@ class JohnMurphyStrategy:
             prev_ema_50 = previous['EMA_50']
             
             # Additional Filters
-            rsi_filter = rsi > 60  # Pulled back, not oversold
-            macd_filter = (macd_line < 0) and (macd_line < macd_signal)  # Strong Bearish MACD confirmation
-            vol_filter = True if volume_ma <= 0 or volume <= 0 else volume > volume_ma
-            bb_filter = bb_width > config.MIN_BB_WIDTH_PCT  # Volatility confirmation
+            rsi_filter = rsi > 30  # Not oversold
+            macd_filter = macd_line < macd_signal  # Bearish MACD confirmation
             
             # EMA 50 rejection or Resistance level rejection
-            if prev_high >= prev_ema_50 and close_price < ema_50 and rsi_filter and macd_filter and vol_filter and bb_filter:
+            ema_rejection = (prev_high >= prev_ema_50 or latest['High'] >= ema_50) and close_price < ema_50
+            res_rejection = prev_high >= resistance and close_price < resistance
+            if (ema_rejection or res_rejection) and rsi_filter and macd_filter:
                 stop_loss = max(resistance, latest['High'] * 1.001) # Above resistance level
                 return {
                     'action': 'SELL',
                     'entry': close_price,
                     'stop_loss': stop_loss,
-                    'reason': 'Downtrend EMA 50 Rejection (Confirmed)'
+                    'reason': 'Downtrend EMA 50 Rejection'
                 }
 
         return None
