@@ -12,11 +12,38 @@ FOREX_CODES = {
 }
 
 YAHOO_TO_MT5_SYMBOLS = {
+    # Metals / Commodities
     "GC=F": "XAUUSD",
     "SI=F": "XAGUSD",
-    "^IXIC": "NAS100",
-    "^GSPC": "US500",
+    "PL=F": "XPTUSD",
+    "PA=F": "XPDUSD",
+    # US Indices
     "^DJI": "US30",
+    "^NDX": "USTEC",
+    "^IXIC": "USTEC",
+    "^GSPC": "US500",
+    "^RUT": "US2000",
+    # European Indices
+    "^GDAXI": "DE40",
+    "^FTSE": "UK100",
+    "^FCHI": "FRA40",
+    "^STOXX50E": "EUSTX50",
+    "^IBEX": "ESP35",
+    "FTSEMIB.MI": "IT40",
+    "^AEX": "NETH25",
+    "OBX.OL": "NOR25",
+    "^OMX": "SE30",
+    "^SSMI": "SWI20",
+    "^MDAXI": "MIDDE50",
+    "^TECDAX": "TECHDE30",
+    # Asia / Pacific & Global Indices
+    "^N225": "JPN225",
+    "^AXJO": "AUS200",
+    "^HSI": "HK50",
+    "000016.SS": "CHINA50",
+    "^HSCE": "CHINAH",
+    "^GSPTSE": "CA60",
+    "^J200.JO": "SA40",
 }
 
 
@@ -58,7 +85,7 @@ def mt5_symbol_from_market(name: str = "", ticker: str = "") -> str:
 def pip_size_for_symbol(symbol: str = "", price: Optional[float] = None) -> float:
     """
     Returns the usual pip size for display and approximate risk math.
-    JPY pairs use 0.01; most forex pairs use 0.0001; metals/indices use 0.1.
+    JPY pairs use 0.01; most forex pairs use 0.0001; metals/indices use 0.1 or 1.0.
     """
     clean = (symbol or "").upper()
 
@@ -70,10 +97,10 @@ def pip_size_for_symbol(symbol: str = "", price: Optional[float] = None) -> floa
             return 1.0
         return 0.0001
 
-    if clean.startswith(("XAU", "XAG")):
+    if clean.startswith(("XAU", "XAG", "XPT", "XPD")):
         return 0.1
 
     if price is not None and price > 1000:
-        return 0.1
+        return 1.0 if price > 10000 else 0.1
 
     return 0.0001

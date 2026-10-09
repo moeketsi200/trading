@@ -48,6 +48,24 @@
         "rec": "RECOMMENDED (Post-News)"
     },
     {
+        "name": "SILVER (XAG/USD)",
+        "ticker": "SI=F",
+        "tier": "Tier 1: Metal / Commodity",
+        "rec": "RECOMMENDED (Post-News)"
+    },
+    {
+        "name": "PLATINUM (XPT/USD)",
+        "ticker": "PL=F",
+        "tier": "Tier 1: Metal / Commodity",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "PALLADIUM (XPD/USD)",
+        "ticker": "PA=F",
+        "tier": "Tier 1: Metal / Commodity",
+        "rec": "MODERATE"
+    },
+    {
         "name": "AUD/CAD",
         "ticker": "AUDCAD=X",
         "tier": "Tier 2: Forex Minor",
@@ -732,15 +750,141 @@
         "rec": "MODERATE"
     },
     {
-        "name": "NASDAQ (NAS100)",
+        "name": "US30 (DOW JONES)",
+        "ticker": "^DJI",
+        "tier": "Tier 4: US Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "USTEC (NASDAQ 100)",
         "ticker": "^NDX",
         "tier": "Tier 4: US Index",
         "rec": "HIGH VOLATILITY"
     },
     {
-        "name": "US30 (DOW JONES)",
-        "ticker": "^DJI",
+        "name": "US500 (S&P 500)",
+        "ticker": "^GSPC",
         "tier": "Tier 4: US Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "US2000 (RUSSELL 2000)",
+        "ticker": "^RUT",
+        "tier": "Tier 4: US Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "DE40 (GERMANY 40)",
+        "ticker": "^GDAXI",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "UK100 (FTSE 100)",
+        "ticker": "^FTSE",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "FRA40 (CAC 40)",
+        "ticker": "^FCHI",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "EUSTX50 (EURO STOXX 50)",
+        "ticker": "^STOXX50E",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "ESP35 (IBEX 35)",
+        "ticker": "^IBEX",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "IT40 (ITALY 40)",
+        "ticker": "FTSEMIB.MI",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "NETH25 (NETHERLANDS 25)",
+        "ticker": "^AEX",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "NOR25 (NORWAY 25)",
+        "ticker": "OBX.OL",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "SE30 (SWEDEN 30)",
+        "ticker": "^OMX",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "SWI20 (SWISS 20)",
+        "ticker": "^SSMI",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "MIDDE50 (GERMANY MID 50)",
+        "ticker": "^MDAXI",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "TECHDE30 (GERMANY TECH 30)",
+        "ticker": "^TECDAX",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "JPN225 (NIKKEI 225)",
+        "ticker": "^N225",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "AUS200 (ASX 200)",
+        "ticker": "^AXJO",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "HK50 (HANG SENG 50)",
+        "ticker": "^HSI",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "CHINA50 (FTSE CHINA A50)",
+        "ticker": "000016.SS",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "CHINAH (HANG SENG CHINA)",
+        "ticker": "^HSCE",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "CA60 (CANADA 60)",
+        "ticker": "^GSPTSE",
+        "tier": "Tier 4: Global Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "SA40 (SOUTH AFRICA 40)",
+        "ticker": "^J200.JO",
+        "tier": "Tier 4: Global Index",
         "rec": "HIGH VOLATILITY"
     },
     {
