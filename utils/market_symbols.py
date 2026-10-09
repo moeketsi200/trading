@@ -5,9 +5,10 @@ from typing import Optional, Tuple
 
 
 FOREX_CODES = {
-    "AUD", "CAD", "CHF", "CNH", "CZK", "DKK", "EUR", "GBP", "HKD",
-    "HUF", "ILS", "JPY", "MXN", "NOK", "NZD", "PLN", "RUB", "SEK",
-    "SGD", "THB", "TRY", "USD", "ZAR",
+    "ARS", "AUD", "BRL", "CAD", "CHF", "CLP", "CNH", "COP", "CZK", "DKK",
+    "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN",
+    "NGN", "NOK", "NZD", "PLN", "RUB", "SEK", "SGD", "THB", "TRY", "USD",
+    "ZAR",
 }
 
 YAHOO_TO_MT5_SYMBOLS = {
@@ -62,7 +63,12 @@ def pip_size_for_symbol(symbol: str = "", price: Optional[float] = None) -> floa
     clean = (symbol or "").upper()
 
     if len(clean) >= 6 and clean[:3] in FOREX_CODES and clean[3:6] in FOREX_CODES:
-        return 0.01 if clean[3:6] == "JPY" else 0.0001
+        quote = clean[3:6]
+        if quote in {"JPY", "HUF", "THB"}:
+            return 0.01
+        if quote in {"KRW", "IDR", "CLP", "COP"}:
+            return 1.0
+        return 0.0001
 
     if clean.startswith(("XAU", "XAG")):
         return 0.1

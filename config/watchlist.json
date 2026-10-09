@@ -1,16 +1,758 @@
 [
-    {"name": "EUR/USD", "ticker": "EURUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "GBP/USD", "ticker": "GBPUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "USD/JPY", "ticker": "USDJPY=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "AUD/USD", "ticker": "AUDUSD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "USD/CAD", "ticker": "USDCAD=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "USD/CHF", "ticker": "USDCHF=X", "tier": "Tier 1: Forex Major", "rec": "RECOMMENDED"},
-    {"name": "GOLD (XAU/USD)", "ticker": "GC=F", "tier": "Tier 1: Metal / Commodity", "rec": "RECOMMENDED (Post-News)"},
-    {"name": "EUR/GBP", "ticker": "EURGBP=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "GBP/JPY", "ticker": "GBPJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "EUR/JPY", "ticker": "EURJPY=X", "tier": "Tier 2: Forex Minor", "rec": "MODERATE"},
-    {"name": "NASDAQ (NAS100)", "ticker": "^NDX", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},
-    {"name": "US30 (DOW JONES)", "ticker": "^DJI", "tier": "Tier 3: US Index", "rec": "HIGH VOLATILITY"},
-    {"name": "BITCOIN (BTC/USD)", "ticker": "BTC-USD", "tier": "Tier 4: Crypto", "rec": "HIGH VOLATILITY"},
-    {"name": "ETHEREUM (ETH/USD)", "ticker": "ETH-USD", "tier": "Tier 4: Crypto", "rec": "HIGH VOLATILITY"}
+    {
+        "name": "AUD/USD",
+        "ticker": "AUDUSD=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "EUR/USD",
+        "ticker": "EURUSD=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "GBP/USD",
+        "ticker": "GBPUSD=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "NZD/USD",
+        "ticker": "NZDUSD=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "USD/CAD",
+        "ticker": "USDCAD=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "USD/CHF",
+        "ticker": "USDCHF=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "USD/JPY",
+        "ticker": "USDJPY=X",
+        "tier": "Tier 1: Forex Major",
+        "rec": "RECOMMENDED"
+    },
+    {
+        "name": "GOLD (XAU/USD)",
+        "ticker": "GC=F",
+        "tier": "Tier 1: Metal / Commodity",
+        "rec": "RECOMMENDED (Post-News)"
+    },
+    {
+        "name": "AUD/CAD",
+        "ticker": "AUDCAD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/CHF",
+        "ticker": "AUDCHF=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/JPY",
+        "ticker": "AUDJPY=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/NZD",
+        "ticker": "AUDNZD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/CHF",
+        "ticker": "CADCHF=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/JPY",
+        "ticker": "CADJPY=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/JPY",
+        "ticker": "CHFJPY=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/AUD",
+        "ticker": "EURAUD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/CAD",
+        "ticker": "EURCAD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/CHF",
+        "ticker": "EURCHF=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/GBP",
+        "ticker": "EURGBP=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/JPY",
+        "ticker": "EURJPY=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/NZD",
+        "ticker": "EURNZD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/AUD",
+        "ticker": "GBPAUD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/CAD",
+        "ticker": "GBPCAD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/CHF",
+        "ticker": "GBPCHF=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/JPY",
+        "ticker": "GBPJPY=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/NZD",
+        "ticker": "GBPNZD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/CAD",
+        "ticker": "NZDCAD=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/CHF",
+        "ticker": "NZDCHF=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/JPY",
+        "ticker": "NZDJPY=X",
+        "tier": "Tier 2: Forex Minor",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/DKK",
+        "ticker": "AUDDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/HKD",
+        "ticker": "AUDHKD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/HUF",
+        "ticker": "AUDHUF=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/NOK",
+        "ticker": "AUDNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/PLN",
+        "ticker": "AUDPLN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/SEK",
+        "ticker": "AUDSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/SGD",
+        "ticker": "AUDSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/THB",
+        "ticker": "AUDTHB=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "AUD/ZAR",
+        "ticker": "AUDZAR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/DKK",
+        "ticker": "CADDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/MXN",
+        "ticker": "CADMXN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/NOK",
+        "ticker": "CADNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/PLN",
+        "ticker": "CADPLN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/SEK",
+        "ticker": "CADSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CAD/SGD",
+        "ticker": "CADSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/DKK",
+        "ticker": "CHFDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/HUF",
+        "ticker": "CHFHUF=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/MXN",
+        "ticker": "CHFMXN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/NOK",
+        "ticker": "CHFNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/PLN",
+        "ticker": "CHFPLN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/SEK",
+        "ticker": "CHFSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/SGD",
+        "ticker": "CHFSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/TRY",
+        "ticker": "CHFTRY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CHF/ZAR",
+        "ticker": "CHFZAR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "CNH/JPY",
+        "ticker": "CNHJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "DKK/JPY",
+        "ticker": "DKKJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "DKK/NOK",
+        "ticker": "DKKNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "DKK/SEK",
+        "ticker": "DKKSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/CNH",
+        "ticker": "EURCNH=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/CZK",
+        "ticker": "EURCZK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/DKK",
+        "ticker": "EURDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/HKD",
+        "ticker": "EURHKD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/HUF",
+        "ticker": "EURHUF=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/ILS",
+        "ticker": "EURILS=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/MXN",
+        "ticker": "EURMXN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/NOK",
+        "ticker": "EURNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/PLN",
+        "ticker": "EURPLN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/RUB",
+        "ticker": "EURRUB=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/SEK",
+        "ticker": "EURSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/SGD",
+        "ticker": "EURSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/TRY",
+        "ticker": "EURTRY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "EUR/ZAR",
+        "ticker": "EURZAR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/CZK",
+        "ticker": "GBPCZK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/DKK",
+        "ticker": "GBPDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/HKD",
+        "ticker": "GBPHKD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/HUF",
+        "ticker": "GBPHUF=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/MXN",
+        "ticker": "GBPMXN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/NOK",
+        "ticker": "GBPNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/PLN",
+        "ticker": "GBPPLN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/SEK",
+        "ticker": "GBPSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/SGD",
+        "ticker": "GBPSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/TRY",
+        "ticker": "GBPTRY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "GBP/ZAR",
+        "ticker": "GBPZAR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "HKD/JPY",
+        "ticker": "HKDJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "MXN/JPY",
+        "ticker": "MXNJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NOK/DKK",
+        "ticker": "NOKDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NOK/JPY",
+        "ticker": "NOKJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NOK/SEK",
+        "ticker": "NOKSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/DKK",
+        "ticker": "NZDDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/HUF",
+        "ticker": "NZDHUF=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/MXN",
+        "ticker": "NZDMXN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/NOK",
+        "ticker": "NZDNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NZD/SGD",
+        "ticker": "NZDSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "PLN/JPY",
+        "ticker": "PLNJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "SEK/JPY",
+        "ticker": "SEKJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "SEK/NOK",
+        "ticker": "SEKNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "SGD/HKD",
+        "ticker": "SGDHKD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "SGD/JPY",
+        "ticker": "SGDJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "TRY/JPY",
+        "ticker": "TRYJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/ARS",
+        "ticker": "USDARS=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/BRL",
+        "ticker": "USDBRL=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/CLP",
+        "ticker": "USDCLP=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/CNH",
+        "ticker": "USDCNH=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/COP",
+        "ticker": "USDCOP=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/CZK",
+        "ticker": "USDCZK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/DKK",
+        "ticker": "USDDKK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/HKD",
+        "ticker": "USDHKD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/HUF",
+        "ticker": "USDHUF=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/IDR",
+        "ticker": "USDIDR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/ILS",
+        "ticker": "USDILS=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/INR",
+        "ticker": "USDINR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/KRW",
+        "ticker": "USDKRW=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/MXN",
+        "ticker": "USDMXN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/NGN",
+        "ticker": "USDNGN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/NOK",
+        "ticker": "USDNOK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/PLN",
+        "ticker": "USDPLN=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/RUB",
+        "ticker": "USDRUB=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/SEK",
+        "ticker": "USDSEK=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/SGD",
+        "ticker": "USDSGD=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/THB",
+        "ticker": "USDTHB=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/TRY",
+        "ticker": "USDTRY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "USD/ZAR",
+        "ticker": "USDZAR=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "ZAR/JPY",
+        "ticker": "ZARJPY=X",
+        "tier": "Tier 3: Forex Cross/Exotic",
+        "rec": "MODERATE"
+    },
+    {
+        "name": "NASDAQ (NAS100)",
+        "ticker": "^NDX",
+        "tier": "Tier 4: US Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "US30 (DOW JONES)",
+        "ticker": "^DJI",
+        "tier": "Tier 4: US Index",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "BITCOIN (BTC/USD)",
+        "ticker": "BTC-USD",
+        "tier": "Tier 4: Crypto",
+        "rec": "HIGH VOLATILITY"
+    },
+    {
+        "name": "ETHEREUM (ETH/USD)",
+        "ticker": "ETH-USD",
+        "tier": "Tier 4: Crypto",
+        "rec": "HIGH VOLATILITY"
+    }
 ]
