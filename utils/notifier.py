@@ -158,15 +158,44 @@ class TelegramNotifier:
 
         url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
 
-        emoji = "🟩" if rec['action'] == "BUY" else "🟥"
-        text = f"{emoji} <b>{rec['action']} {rec['pair']}</b>\n"
-        text += f"Tier: {rec['tier']}\n"
-        text += f"MT5: {rec.get('mt5_symbol', rec['ticker'])}\n"
-        text += f"Entry: {rec['entry']:.5f}\n"
-        text += f"SL: {rec['stop_loss']:.5f}\n"
-        text += f"TP: {rec['take_profit']:.5f}\n"
-        text += f"Risk: ${rec['dollar_risk']:.2f} ({rec['lot_size']} Lots)\n"
-        text += f"Reason: {rec['reason']}\n"
+        action_emoji = "🟢" if rec['action'] == "BUY" else "🔴"
+        action_badge = f"{rec['action']} LIMIT / MARKET"
+        rr = rec.get("reward_risk_ratio", 3)
+        rr_label = f"1:{rr:g} R:R Runner" if rec.get("break_even_trigger") else f"1:{rr:g} R:R Target"
+        dur = rec.get("duration", {})
+        mt5_sym = rec.get('mt5_symbol', rec['ticker'])
+        sl_pips = rec.get('sl_pips', 0.0)
+
+        lines = [
+            f"🔥 <b>[TRADE RECOMMENDATION: {rec['pair']}]</b>",
+            f"<i>{rec['tier']}</i>",
+            "━━━━━━━━━━━━━━━━━━━━━━",
+            f"🔹 <b>MT5 Symbol:</b> <code>{mt5_sym}</code>",
+            f"{action_emoji} <b>Action:</b> <b>{action_badge}</b>",
+            f"📍 <b>Entry Price:</b> <code>{rec['entry']:.5f}</code>",
+            f"🛑 <b>Stop Loss:</b> <code>{rec['stop_loss']:.5f}</code> ({sl_pips:.1f} pips)",
+            f"🎯 <b>Take Profit:</b> <code>{rec['take_profit']:.5f}</code> ({rr_label})",
+        ]
+
+        if rec.get("break_even_trigger"):
+            lines.extend([
+                f"🛡️ <b>Trade Management:</b> Move SL to BE at <code>{rec['break_even_trigger']:.5f}</code>",
+                f"📈 <b>Trailing Stop:</b> Trail SL behind 1H EMA 50 after BE",
+            ])
+
+        lines.extend([
+            f"💰 <b>Max Risk (1%):</b> ${rec['dollar_risk']:.2f}",
+            f"📊 <b>Recommended Lots:</b> <b>{rec['lot_size']} Lots</b>",
+            f"💡 <b>Signal Rationale:</b> {rec['reason']}",
+            f"⚖️ <b>Fundamental Bias:</b> {rec.get('fundamental_bias', 'N/A')}",
+            "━━━━━━━━━━━━━━━━━━━━━━",
+            "⏱️ <b>DURATION & HOLDING GUIDANCE:</b>",
+            f"• <b>Trade Style:</b> {dur.get('style', 'Day Trade')}",
+            f"• <b>Estimated Duration:</b> {dur.get('estimated_duration', '4 to 8 Hours')}",
+            f"• <b>Max Expiry Limit:</b> {dur.get('max_expiry', '24 Hours')}",
+        ])
+
+        text = "\n".join(lines)
 
         try:
             response = requests.post(url, json={
